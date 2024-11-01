@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const Hero = () => {
+
   return (
     <div>
         <section className="bg-gray-50 overflow-y-hidden">
