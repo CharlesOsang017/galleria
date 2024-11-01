@@ -5,7 +5,7 @@ const Header = () => {
     username: 'Charles_17',
     profileImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqafzhnwwYzuOTjTlaYMeQ7hxQLy_Wq8dnQg&s"
 })
-const userFound = false
+const userFound = true
   return (
     <header className='flex justify-between shadow-md px-6 py-2 items-center'>
         <div className="logo">
