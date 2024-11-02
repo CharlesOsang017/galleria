@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import React, { useState } from 'react';
 
 const CreateGalleryPage = () => {
@@ -8,6 +9,10 @@ const CreateGalleryPage = () => {
 
   const handleImageUpload = (e) => {
     setImage(URL.createObjectURL(e.target.files[0]));
+  };
+
+  const handleClearImage = () => {
+    setImage(null);
   };
 
   const handleSubmit = (e) => {
@@ -35,7 +40,12 @@ const CreateGalleryPage = () => {
           className="border border-gray-700 rounded p-2"
           required
         />
-        {image && <img src={image} alt="Preview" className="mt-2 rounded" />}
+        {image && (
+          <div className="relative">
+            <X className="absolute top-2 right-2 cursor-pointer" onClick={handleClearImage} />
+            <img src={image} alt="Preview" className="mt-2 rounded-md" />
+          </div>
+        )}
         <textarea
           placeholder="Description"
           value={description}
