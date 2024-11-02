@@ -7,6 +7,7 @@ import Item from './pages/Item'
 import Items from './pages/Items'
 import Detail from './pages/Detail'
 import ProfilePage from './pages/profile/profilePage'
+import CreateGalleryPage from './pages/CreateGallery/CreateGalleryPage'
 
 const App = () => {
   return (
@@ -17,7 +18,8 @@ const App = () => {
       {/* <Login /> */}
       {/* <Items /> */}
      {/* <Detail /> */}
-     <ProfilePage />
+     {/* <ProfilePage /> */}
+     <CreateGalleryPage />
     </div>
   )
 }
