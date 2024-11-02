@@ -1,5 +1,6 @@
 import { Edit, FileEdit, PenBox, PencilIcon } from "lucide-react";
 import React from "react";
+import EditProfile from "./EditProfile";
 
 const ProfilePage = () => {
   const user = {
@@ -29,7 +30,7 @@ const ProfilePage = () => {
       </div>
 
       <div className="flex justify-end items-center">
-        <button className="btn btn-ghost">Edit Profile</button>
+       <EditProfile />
       </div>
       {/* 
       <div className="mt-6 flex justify-around w-full">
