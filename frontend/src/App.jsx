@@ -5,6 +5,7 @@ import Register from './pages/Register'
 import Login from './pages/Login'
 import Item from './pages/Item'
 import Items from './pages/Items'
+import Detail from './pages/Detail'
 
 const App = () => {
   return (
@@ -13,8 +14,8 @@ const App = () => {
       {/* <Hero /> */}
       {/* <Register /> */}
       {/* <Login /> */}
-      <Items />
-     
+      {/* <Items /> */}
+     <Detail />
     </div>
   )
 }
