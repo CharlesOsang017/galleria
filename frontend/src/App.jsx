@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import Item from './pages/Item'
 import Items from './pages/Items'
 import Detail from './pages/Detail'
+import ProfilePage from './pages/profile/profilePage'
 
 const App = () => {
   return (
@@ -15,7 +16,8 @@ const App = () => {
       {/* <Register /> */}
       {/* <Login /> */}
       {/* <Items /> */}
-     <Detail />
+     {/* <Detail /> */}
+     <ProfilePage />
     </div>
   )
 }
