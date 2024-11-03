@@ -3,6 +3,7 @@ import React from 'react'
 const Item = () => {
   return (
 <div className="relative w-full max-w-xm">
+
   <figure className='shadow-md'>
     <img
       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxBNimLhpyP4Hr08l_fnBHXVVQbkxpcbzTsw&s"
