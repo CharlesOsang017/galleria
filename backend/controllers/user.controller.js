@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import bcrypt from 'bcryptjs'
+import { generateTokenAndSetCookie } from "../utils/token.js";
 
 export const createUser = async (req, res) => {
   const { username, fullName, email, password } = req.body;
@@ -24,6 +25,7 @@ export const createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt)
 
     const user = await User.create({ username, fullName, email, password:hashedPassword });
+    generateTokenAndSetCookie(user?._id, res)
     await user.save();
     return res.status(201).json({ message: 'User created successfully!' });
   } catch (error) {
@@ -40,6 +42,7 @@ export const userLogin = async(req, res)=>{
     if(!user || !isPasswordCorrect){
       return res.status(404).json({message: "email or password is not correct"})
     }
+    generateTokenAndSetCookie(user?._id, res)
     return res.status(200).json({
       fullName: user?.fullName,
       username: user?.username,
@@ -50,5 +53,14 @@ export const userLogin = async(req, res)=>{
     })
   } catch (error) {
     console.log('error loging in user', error.message)
+  }
+}
+
+export const logOut = async(req, res)=>{
+  try {
+    res.cookie("jwt", "", {maxAge: 0})
+    return res.status(200).json({message: 'logged out successfully!'})
+  } catch (error) {
+    console.log('error logging out ', error.message)
   }
 }
