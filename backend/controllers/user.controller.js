@@ -31,3 +31,24 @@ export const createUser = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+export const userLogin = async(req, res)=>{
+  const {email, password} = req.body;
+  try {
+    const user = await User.findOne({email})
+    const isPasswordCorrect = await bcrypt.compare(password, user?.password || "")
+    if(!user || !isPasswordCorrect){
+      return res.status(404).json({message: "email or password is not correct"})
+    }
+    return res.status(200).json({
+      fullName: user?.fullName,
+      username: user?.username,
+      email: user?.email,
+      skills: user?.skills,
+      about: user?.about,
+      profileImg: user?.profileImg
+    })
+  } catch (error) {
+    console.log('error loging in user', error.message)
+  }
+}
