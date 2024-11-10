@@ -1,13 +1,10 @@
 import express from 'express'
-import { createUser,getMe, logOut, userLogin } from '../controllers/user.controller.js';
-import { protectedRoute } from '../middleware/protectRoute.js';
+import { getUserProfile, updateProfile } from '../controllers/user.controller.js'
+import { protectedRoute } from '../middleware/protectRoute.js'
 
 const router = express.Router()
 
+router.get("/profile/:username", protectedRoute, getUserProfile)
+router.put("/update/:id", protectedRoute, updateProfile)
 
-router.post('/create', createUser)
-router.post("/login", userLogin)
-router.post("/logout", logOut)
-router.get('/me', protectedRoute, getMe)
-
-export default router;
+export default router
