@@ -1,5 +1,6 @@
 import Post from "../models/post.model.js";
 import { v2 as cloudinary } from "cloudinary";
+import User from "../models/user.model.js";
 
 export const createPost = async (req, res) => {
   const { title, description } = req.body;
@@ -52,5 +53,40 @@ export const deletePost = async(req, res)=>{
 
   } catch (error) {
     console.log('error in deletePost controller', error.message)
+  }
+}
+
+export const updatePost = async(req, res)=>{
+  const {title, description}= req.body;
+  let {image} = req.body
+  try {
+    const user = await User.findById(req.user._id)
+    const post = await Post.findById(req.params.id)
+    if(!post) {
+      return res.status(404).json({message: "post is not found"})
+    }
+    // check if the owner of the post is the logged in user
+    if(!post.user.equals(req.user._id)){
+      return res.status(401).json({message: 'you are not authorized to update this post'})
+    }
+    if (image) {
+      if (user.image) {
+        await cloudinary.uploader.destroy(
+          user.image.split("/").pop().split(".")[0]
+        );
+      }
+      const uploadedResponse = await cloudinary.uploader.upload(image);
+      image = uploadedResponse.secure_url;
+    }
+    // update the fields
+    post.title = title || post.title;
+    post.image = image || post.image;
+    post.description = description || post.description; 
+
+    await post.save()
+    return res.status(200).json(post)
+    
+  } catch (error) {
+    console.log('error in udatePost controller', error.message)
   }
 }
