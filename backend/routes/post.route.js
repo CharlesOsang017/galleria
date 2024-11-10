@@ -1,6 +1,6 @@
 import express from 'express'
 import { protectedRoute } from '../middleware/protectRoute.js'
-import { createPost, deletePost, updatePost, likeUnlikePost, commentOnPost } from '../controllers/post.controller.js'
+import { createPost, deletePost, updatePost, likeUnlikePost, commentOnPost, gettAllPosts } from '../controllers/post.controller.js'
 
 const router = express.Router()
 
@@ -9,5 +9,6 @@ router.delete("/delete/:id", protectedRoute, deletePost)
 router.put("/update/:id", protectedRoute, updatePost)
 router.post('/likes/:id', protectedRoute, likeUnlikePost)
 router.post("/comments/:id", protectedRoute, commentOnPost)
+router.get("/all", protectedRoute, gettAllPosts )
 
 export default router
