@@ -5,6 +5,7 @@ import auhRoutes from './routes/auth.route.js';
 import cookieParser from 'cookie-parser';
 import userRoute from './routes/user.route.js'
 import { v2 as cloudinary } from "cloudinary";
+import postRoute from './routes/post.route.js'
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", auhRoutes);
 app.use("/api/user", userRoute)
+app.use("/api/post", postRoute)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
