@@ -1,7 +1,54 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate()
+  const [formData, setFormData] = useState({
+    username: "",
+    fullName: "",
+    email: "",
+    password: "",
+
+  })
+
+
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: async ({ username, fullName, email, password }) => {
+      try {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, fullName, email, password }),
+        });
+  
+        if (!res.ok) {
+          throw new Error('Failed to sign up');
+        }
+  
+        const data = await res.json();
+        console.log(data);
+        return data; // Return data for further use
+  
+      } catch (err) {
+        console.error('Signup failed:', err);
+        throw err; // Throw the error for `useMutation` to handle
+      }
+    },
+    onSuccess: async(data)=>{
+      toast.success(data.message)
+      navigate('/login')
+    }
+
+  });
+  
+    const handleRegister = ()=>{
+        mutate(formData)
+  }
   return (
     <div className="flex flex-col items-center justify-center px-3 space-y-2 py-8">
       <h2 className="text-extrabold text-3xl">Join Today</h2>
@@ -14,7 +61,7 @@ const Register = () => {
         >
           <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
         </svg>
-        <input type="text" className="grow" placeholder="Full Name" />
+        <input type="text" className="grow" name="fullName" placeholder="Full Name"  value={formData.fullName} onChange={(e)=>setFormData({...formData, fullName: e.target.value})}/>
       </label>
       <label className="input input-bordered flex items-center gap-2 w-full max-w-md">
         <svg
@@ -25,7 +72,7 @@ const Register = () => {
         >
           <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
         </svg>
-        <input type="text" className="grow" placeholder="Username" />
+        <input type="text" className="grow" name="username" placeholder="Username" value={formData.username} onChange={(e)=>setFormData({...formData, username: e.target.value})}/>
       </label>
       <label className="input input-bordered flex items-center gap-2 w-full max-w-md">
         <svg
@@ -37,7 +84,7 @@ const Register = () => {
           <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
           <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
         </svg>
-        <input type="email" className="grow" placeholder="Email" />
+        <input type="email" className="grow" placeholder="Email" value={formData.email} name="email" onChange={(e)=>setFormData({...formData, email: e.target.value})}/>
       </label>
       <label className="input input-bordered flex items-center gap-2 w-full max-w-md">
         <svg
@@ -52,12 +99,12 @@ const Register = () => {
             clipRule="evenodd"
           />
         </svg>
-        <input type="password" className="grow" placeholder="Password" />
+        <input type="password" className="grow" placeholder="Password"  name="password" onChange={(e)=>setFormData({...formData, password: e.target.value})}/>
       </label>
-      <button className="btn w-full max-w-md btn-base-300">REGISTER</button>
+      <button onClick={handleRegister} className="btn w-full max-w-md btn-base-300">REGISTER</button>
       <small className="text-sm">
         Have an Account?{" "}
-        <Link to={'/login'} className="text-blue-600 underline">
+        <Link to={"/login"} className="text-blue-600 underline">
           Login
         </Link>
       </small>

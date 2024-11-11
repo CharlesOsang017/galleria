@@ -13,7 +13,7 @@ const Header = () => {
     <header className="flex justify-between shadow-md px-6 py-2 items-center sticky top-0 bg-white">
       <Link to={"/items"} className="logo">
         <img
-          src="/public/svg_lg.png"
+          src="/svg_lg.png"
           alt="gallery_logo"
           className="md:h-20 md:w-20 h-10 w-10"
         />

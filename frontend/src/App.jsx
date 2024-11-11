@@ -8,6 +8,7 @@ import Detail from './pages/Detail'
 import ProfilePage from './pages/profile/profilePage'
 import CreateGalleryPage from './pages/CreateGallery/CreateGalleryPage'
 import { Route, Routes } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
       <Route  path="/create" element={<CreateGalleryPage />} />
       <Route path='/' element={<Hero />} />
     </Routes>
+    <Toaster />
     </>
   )
 }
