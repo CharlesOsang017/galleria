@@ -6,8 +6,10 @@ import toast from 'react-hot-toast'
 
 const Detail = () => {
   const { id } = useParams();
+  const {data: logedInUser} = useQuery({queryKey: ['authUser']})
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState("");
+
 
   // Fetch post details
   const { data: postDetail, isPending } = useQuery({
@@ -46,6 +48,32 @@ const Detail = () => {
     
   };
 
+  const {mutate: likePost, isLoading: isLiking} = useMutation({
+    mutationFn: async()=>{
+      try {
+        const res = await fetch(`/api/post/likes/${postDetail._id}`, {
+          method: 'POST',
+              
+        })
+        const data = await res.json()
+        if(!res.ok){
+          throw new Error(data.message || 'error liking a post')
+        }
+      } catch (error) {
+        throw new Error(error.message)
+      }
+    },
+    onSuccess: async() => {
+      queryClient.invalidateQueries({queryKey: ['detailPost']})
+      
+    },
+  })
+
+  const handleLikePost = () => {
+    if (isLiking) return;
+    likePost();
+  };
+
   return (
     <div className="container md:flex flex-row justify-center pt-8 gap-8 mb-4">
       {/* Left Column */}
@@ -82,7 +110,10 @@ const Detail = () => {
         {/* Like and Comment Icons */}
         <div className="flex gap-4 items-center justify-end pt-0 text-gray-600">
           <div className="flex items-center gap-1">
-            <Heart className={`h-6 w-6 ${postDetail?.likes ? "text-red-500" : ""}`} />
+          <Heart 
+      onClick={handleLikePost} 
+      className={`h-6 w-6 cursor-pointer ${postDetail?.likes?.includes(logedInUser?._id) ? "text-red-500 fill-current" : ""}`} 
+    />
             <span>{postDetail?.likes.length}</span>
           </div>
           <div className="flex items-center gap-1">
