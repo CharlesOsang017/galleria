@@ -1,13 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const [user, setUser] = useState({
-    username: "Charles_17",
-    profileImg:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqafzhnwwYzuOTjTlaYMeQ7hxQLy_Wq8dnQg&s",
-  });
+  const {data: authUser} = useQuery({queryKey: ['authUser']})
+
   const userFound = false;
   return (
     <header className="flex justify-between shadow-md px-6 py-2 items-center sticky top-0 bg-white">
@@ -20,7 +18,7 @@ const Header = () => {
       </Link>
 
       <div className="side-bar flex items-center ml-auto gap-4">
-        {userFound ? (
+        {authUser ? (
           <>
             {" "}
             <Link to={"/create"}>
@@ -28,13 +26,13 @@ const Header = () => {
                 <Plus />
               </button>
             </Link>
-            <Link to={"/profile"} className="flex items-center gap-2">
+            <Link to={`profile/${authUser?.username}`} className="flex items-center gap-2">
               <img
-                src={user.profileImg}
-                alt={user.username}
+                src={authUser.profileImg}
+                alt={authUser.username}
                 className="h-10 w-10 rounded-full"
               />
-              <h4>@{user.username}</h4>
+              <h4>@{authUser.username}</h4>
             </Link>
           </>
         ) : (

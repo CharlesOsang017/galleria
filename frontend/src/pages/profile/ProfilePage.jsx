@@ -1,49 +1,146 @@
-import { Edit, FileEdit, PenBox, PencilIcon } from "lucide-react";
-import React from "react";
+import { PencilIcon } from "lucide-react";
+import React, { useRef, useState } from "react";
 import EditProfile from "./EditProfile";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
+import useProfileUpdate from "../../hooks/useProfileUpdate";
 
 const ProfilePage = () => {
-  const user = {
-    name: "Charles Osango",
-    username: "@Charles_17",
-    bio: "Nutritionist, Developer, and Community Volunteer",
-    profileImg:
-      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    location: "Nairobi, Kenya",
-  };
+  const { data: logedinUser } = useQuery({ queryKey: ["authUser"] });
+  const profileImgRef = useRef(null);
+  const [profileImg, setProfileImg] = useState(null);
+
+
+  const { username } = useParams();
+  const { data: user } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: async () => {
+      try {
+        const res = await fetch(`/api/user/profile/${username}`);
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error("error getting profile");
+        }
+        return data;
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    },
+  });
+
+  const isMyProfile = logedinUser?._id === user?._id;
+
+ 
+
+  // const handleImgChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setProfileImg(URL.createObjectURL(file)); // For preview
+  //     setSelectedFile(file); // Save file to state for upload
+  //     // Add any image validation (e.g., size, format) here if needed
+  //   }
+  // };
+
+  
+	const handleImgChange = (e) => {
+		const file = e.target.files[0];
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = () => {				
+				setProfileImg(reader.result);
+			};
+			reader.readAsDataURL(file);
+		}
+	};
+
+  // const handleProfileImg = (profileImg) => {
+  //   mutate(profileImg);
+  // };
+  const {updateProfile, isUpdatingProfile} = useProfileUpdate()
+
+
+  const queryClient = useQueryClient();
+  const {
+    mutate: exit,
+    isError,
+    error,
+    isPending,
+  } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch("/api/auth/logout", {
+          method: "POST",
+        });
+        if (!res.ok) throw new Error("something went wrong");
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    onSuccess: () => {
+      Promise.all([
+				queryClient.invalidateQueries({queryKey: ['userProfile']}),
+				queryClient.invalidateQueries({queryKey: ['authUser']})
+			])
+    },
+  });
 
   return (
-    <div className="container mx-auto max-w-lg p-6 shadow-lg bg-white rounded-lg mt-8">
+    <div className="container mx-auto max-w-lg p-6 shadow-lg  rounded-lg mt-8">
       <div className="relative flex flex-col items-center group">
-        <div className="absolute top-2 right-13 bg-white  rounded-full p-1 shadow-md  opacity-0 group-hover:opacity-100 transition-opacity">
-          <PencilIcon className="text-gray-600 h-5 w-5 cursor-pointer" />
+        {/* Pencil Icon to Change Profile Image */}
+        <div className="absolute top-2 right-4  rounded-full p-1  ">
+          {profileImg ? (
+            <button
+              onClick={async() => await updateProfile(profileImg)}
+              className="btn btn-outline rounded-full btn-sm"
+            >
+              save
+            </button>
+          ) : (
+            <PencilIcon
+              className="text-gray-600 h-5 w-5 cursor-pointer"
+              onClick={() => {
+                profileImgRef.current.click();
+              }}
+            />
+          )}
+          <input
+            type="file"
+            hidden
+            ref={profileImgRef}
+            onChange={(e)=>handleImgChange(e)}
+          />
         </div>
+
+        {/* Profile Image */}
         <img
-          src={user.profileImg}
-          alt={`${user.name}'s profile`}
+          src={profileImg || user?.profileImg }
+          alt={`${user?.username || "user"}'s profile`}
           className="rounded-full w-40 h-40 object-cover"
         />
-        <h1 className="text-2xl font-bold">{user.name}</h1>
-        <p className="text-gray-500">{user.username}</p>
-        <p className="text-sm text-gray-700 text-center mt-2">{user.bio}</p>
-        <p className="text-xs text-gray-500 mt-1">{user.location}</p>
+
+        {/* User Information */}
+        <h1 className="text-2xl font-bold">{user?.fullName}</h1>
+        <p className="text-gray-500">@{user?.username}</p>
+        <p className="text-sm text-gray-700 text-center mt-2">{user?.skills}</p>
+        <p className="text-xs text-gray-500 mt-1">{user?.location}</p>
       </div>
 
-      <div className="flex justify-end items-center">
-       <EditProfile />
+      {/* Edit Profile Component */}
+      <div className="flex justify-between">
+        <button onClick={() => exit()} className="btn btn-ghost">
+          logout
+        </button>
+        <div className="flex justify-end items-center mt-4">
+          <EditProfile />
+        </div>
       </div>
-      {/* 
-      <div className="mt-6 flex justify-around w-full">
-        <button className="btn btn-primary">Follow</button>
-        <button className="btn btn-secondary">Message</button>
-      </div> */}
 
+      {/* About Section */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold">About</h2>
-        <p className="text-gray-700 mt-2">
-          Experienced in community service, nutrition, and software development.
-          Passionate about public health and technology integration.
-        </p>
+        <p className="text-gray-700 mt-2">{user?.about}</p>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import userRoute from './routes/user.route.js'
 import { v2 as cloudinary } from "cloudinary";
 import postRoute from './routes/post.route.js'
-import cors from 'cors'
+// import cors from 'cors'
 
 dotenv.config();
 const app = express();
@@ -23,7 +23,7 @@ cloudinary.config({
 // Apply middleware before routes
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors())
+
 
 app.use("/api/auth", auhRoutes);
 app.use("/api/user", userRoute)
