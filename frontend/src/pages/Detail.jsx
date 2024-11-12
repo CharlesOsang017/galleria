@@ -1,14 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Heart, MessageCircle } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Heart, MessageCircle, MoreVertical } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import toast from 'react-hot-toast'
 
 const Detail = () => {
+
   const { id } = useParams();
+  const navigate = useNavigate()
   const {data: logedInUser} = useQuery({queryKey: ['authUser']})
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState("");
+  const [showMenu, setShowMenu] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+
+
+  const toggleMenu = () => setShowMenu((prev) => !prev);
+  const handleDelete = () => {
+    // Add delete functionality
+    console.log("Deleting post...");
+    setShowModal(false);
+  };
 
 
   // Fetch post details
@@ -74,6 +87,26 @@ const Detail = () => {
     likePost();
   };
 
+  const {mutate:deletePost, isLoading: isDeleting} = useMutation({
+    mutationFn: async()=>{
+      try {
+        const res = await fetch(`/api/post/delete/${postDetail?._id}`, {method: 'DELETE'})
+        const data = await res.json()
+        if(!res.ok){
+          throw new Error(data.message || 'error in deleting')
+        }
+        return data;
+      } catch (error) {
+        throw new Error(error.message)
+      }
+    },
+    onSuccess: async()=>{
+      toast.success('post deleted successffully')
+      queryClient.invalidateQueries({queryKey: ['posts']})
+      navigate('/items')
+    }
+  })
+
   return (
     <div className="container md:flex flex-row justify-center pt-8 gap-8 mb-4">
       {/* Left Column */}
@@ -135,6 +168,38 @@ const Detail = () => {
           </button>
         </div>
       </div>
+
+      <div className="relative">
+      {/* Three Dots Icon */}
+      <div className="absolute  top-2 right-4 cursor-pointer" onClick={toggleMenu}>
+        <MoreVertical />
+      </div>
+
+      {/* Menu */}
+      {showMenu && (
+        <div className="absolute right-0 top-8 bg-white shadow-lg rounded-lg p-2">
+          <button onClick={() => { setShowModal(true); setShowMenu(false); }}>Options</button>
+        </div>
+      )}
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-lg shadow-lg">
+            <h3 className="font-bold mb-4">Post Options</h3>
+            <button  className="btn btn-primary w-full mb-2">
+              Update
+            </button>
+            <button onClick={()=>deletePost(postDetail?._id)} className="btn btn-danger w-full">
+              Delete
+            </button>
+            <button onClick={() => setShowModal(false)} className="btn btn-outline w-full mt-2">
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
 
       {/* Right Column - Comments Section */}
       <div className="flex flex-col w-[400px]">
