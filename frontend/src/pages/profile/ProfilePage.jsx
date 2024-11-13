@@ -43,16 +43,16 @@ const ProfilePage = () => {
   // };
 
   
-	const handleImgChange = (e) => {
-		const file = e.target.files[0];
+  const handleImgChange = (e) => {
+    const file = e.target.files[0];
 		if (file) {
 			const reader = new FileReader();
-			reader.onload = () => {				
+			reader.onload = () => {
 				setProfileImg(reader.result);
 			};
 			reader.readAsDataURL(file);
 		}
-	};
+  };
 
   // const handleProfileImg = (profileImg) => {
   //   mutate(profileImg);
@@ -92,7 +92,7 @@ const ProfilePage = () => {
         <div className="absolute top-2 right-4  rounded-full p-1  ">
           {profileImg ? (
             <button
-              onClick={async() => await updateProfile(profileImg)}
+              onClick={() =>  updateProfile({profileImg})}
               className="btn btn-outline rounded-full btn-sm"
             >
               save
@@ -109,7 +109,7 @@ const ProfilePage = () => {
             type="file"
             hidden
             ref={profileImgRef}
-            onChange={(e)=>handleImgChange(e)}
+            onChange={handleImgChange}
           />
         </div>
 

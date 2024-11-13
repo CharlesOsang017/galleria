@@ -1,24 +1,65 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const CreateGalleryPage = () => {
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const [title, setTitle] = useState('');
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
 
-  const handleImageUpload = (e) => {
-    setImage(URL.createObjectURL(e.target.files[0]));
+  const {mutate: createPost, isLoading: isCreatingPost} = useMutation({
+    mutationFn: async()=>{
+      try {
+        const res = await fetch('/api/post/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({title, description, category, image})
+        })
+        const data = await res.json()
+        if(!res.ok){
+          throw new Error(data.message || "error creating post")
+        }
+        return data
+      } catch (error) {
+        throw new Error(error.message)
+      }
+    },
+    onSuccess: ()=>{
+      toast.success('post created')
+      queryClient.invalidateQueries({queryClient: ['posts']})
+      navigate('/items')
+    },
+    onError: (error)=>{
+      toast.error(error.message)
+    }
+  })
+
+  const handleImgChange = (e) => {
+    const file = e.target.files[0];
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = () => {
+				setImage(reader.result);
+			};
+			reader.readAsDataURL(file);
+		}
   };
 
   const handleClearImage = () => {
     setImage(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, title, image, description, category) => {
     e.preventDefault();
     // Handle form submission logic here
-    console.log({ title, image, description, category });
+    createPost({title, image, description, category,})
   };
 
   return (
@@ -36,7 +77,7 @@ const CreateGalleryPage = () => {
         <input
           type="file"
           accept="image/*"
-          onChange={handleImageUpload}
+          onChange={handleImgChange}
           className="border border-gray-700 rounded p-2"
           required
         />
