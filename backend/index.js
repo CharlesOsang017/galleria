@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import userRoute from './routes/user.route.js'
 import { v2 as cloudinary } from "cloudinary";
 import postRoute from './routes/post.route.js'
+import path from 'path'
 // import cors from 'cors'
 
 dotenv.config();
@@ -28,6 +29,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", auhRoutes);
 app.use("/api/user", userRoute)
 app.use("/api/post", postRoute)
+
+// deployment setup
+const __dirname = path.resolve()
+
+if(process.env.NODE_ENV === "production"){
+    app.use(express.static(path.join(__dirname, "/frontend/dist")))
+
+    app.get("*", (req, res)=>{
+        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+    })
+}
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
