@@ -11,6 +11,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import ProfilePage from "./pages/profile/ProfilePage";
+import Update from "./pages/Update";
 
 const App = () => {
   const { data: user } = useQuery({
@@ -54,6 +55,10 @@ const App = () => {
         <Route
           path="/detail/:id"
           element={user ? <Detail /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/update/:id"
+          element={user ? <Update /> : <Navigate to="/login" />}
         />
         <Route
           path="/create"
