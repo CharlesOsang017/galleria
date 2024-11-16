@@ -5,8 +5,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import useProfileUpdate from "../../hooks/useProfileUpdate";
+import { formatMemberSinceDate } from "../../utils/date";
 
 const ProfilePage = () => {
+  
   const { data: logedinUser } = useQuery({ queryKey: ["authUser"] });
   const profileImgRef = useRef(null);
   const [profileImg, setProfileImg] = useState(null);
@@ -85,6 +87,8 @@ const ProfilePage = () => {
     },
   });
 
+  const datejoined = formatMemberSinceDate(user?.createdAt)
+
   return (
     <div className="container mx-auto max-w-lg p-6 shadow-lg  rounded-lg mt-8">
       <div className="relative flex flex-col items-center group">
@@ -95,7 +99,7 @@ const ProfilePage = () => {
               onClick={() =>  updateProfile({profileImg})}
               className="btn btn-outline rounded-full btn-sm"
             >
-              save
+              {isUpdatingProfile ? (<div className="loader"></div>) : "save"}
             </button>
           ) : (
             <PencilIcon
@@ -125,6 +129,7 @@ const ProfilePage = () => {
         <p className="text-gray-500">@{user?.username}</p>
         <p className="text-sm text-gray-700 text-center mt-2">{user?.skills}</p>
         <p className="text-xs text-gray-500 mt-1">{user?.location}</p>
+        <p className="text-xs text-gray-600 mt-1">{datejoined}</p>
       </div>
 
       {/* Edit Profile Component */}

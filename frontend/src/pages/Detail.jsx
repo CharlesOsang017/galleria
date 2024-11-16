@@ -3,6 +3,7 @@ import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { formatPostDate } from "../utils/date";
 
 const Detail = () => {
   const [formData, setFormData] = useState({
@@ -36,6 +37,8 @@ const Detail = () => {
       return data;
     },
   });
+
+   const timePosted = formatPostDate(postDetail?.createdAt)
 
   // Mutation to add a new comment
   const { mutate: addComment } = useMutation({
@@ -183,7 +186,7 @@ const Detail = () => {
         )}
       </div>
                 <small className="timestamp text-gray-600 text-xs sm:text-sm">
-                  1 day ago
+                 {timePosted}
                 </small>
               </div>
             </div>

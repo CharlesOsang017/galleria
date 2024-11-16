@@ -15,7 +15,7 @@ export const getUserProfile = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-  const { username, fullName, about, skills, email } = req.body;
+  const { username, fullName, about, skills, email, location } = req.body;
   let { profileImg } = req.body;
   const userId = req.user._id;
   try {
@@ -39,6 +39,7 @@ export const updateProfile = async (req, res) => {
     user.about = about || user.about;
     user.skills = skills || user.skills;
     user.profileImg = profileImg || user.profileImg;
+    user.location = location || user.location
 
     // Save the updated user details
     user = await user.save();

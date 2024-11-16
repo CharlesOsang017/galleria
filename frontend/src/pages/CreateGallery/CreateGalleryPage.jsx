@@ -11,8 +11,7 @@ const CreateGalleryPage = () => {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-
-  const { mutate: createPost, isLoading: isCreatingPost } = useMutation({
+  const { mutate: createPost, isPending } = useMutation({
     mutationFn: async () => {
       try {
         const res = await fetch("/api/post/create", {
@@ -22,22 +21,27 @@ const CreateGalleryPage = () => {
           },
           body: JSON.stringify({ title, description, category, image }),
         });
+
         const data = await res.json();
+
         if (!res.ok) {
-          throw new Error(data.message || "error creating post");
+          throw new Error(
+            data.message || "An error occurred while creating the post."
+          );
         }
+
         return data;
       } catch (error) {
-        throw new Error(error.message);
+        throw new Error(`Failed to create post: ${error.message}`);
       }
     },
     onSuccess: () => {
-      toast.success("post created");
-      queryClient.invalidateQueries({ queryClient: ["posts"] });
+      toast.success("Post successfully created!");
+      queryClient.invalidateQueries("posts"); // Correct invalidation syntax
       navigate("/items");
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message || "An unexpected error occurred.");
     },
   });
 
@@ -92,7 +96,7 @@ const CreateGalleryPage = () => {
             <img
               src={image}
               alt="Preview"
-              className="mt-2 rounded-md w-full sm:w-2/6 md:w-3/6 lg:w-5/6"
+              className="mt-2 rounded-md w-full sm:w-2/5 md:w-3/5 lg:w-4/5"
             />
           </div>
         )}
@@ -122,9 +126,18 @@ const CreateGalleryPage = () => {
         </select>
         <button
           type="submit"
-          className="btn btn-primary rounded-full mt-4 text-white"
+          className={`btn btn-primary rounded-full mt-4 text-white ${
+            isPending ? "cursor-not-allowed" : ""
+          }`}
+          disabled={isPending}
         >
-          Submit
+          {isPending ? (
+            <>
+              <span className="loader mr-2"></span> Creating...
+            </>
+          ) : (
+            "Create"
+          )}
         </button>
       </form>
     </div>

@@ -23,14 +23,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LXNJFTmLzCoExghcATlCWG85kI8dsnhJng&s"
     },
+    location: {
+        type: String,
+        default: 'Add location'
+    },
     about: {
         type: String,
-        default: ''
+        default: 'Add about you'
 
     },
     skills: {
         type: String,
-        default: ''
+        default: 'Add skills'
     },
     likedPosts: [
         {

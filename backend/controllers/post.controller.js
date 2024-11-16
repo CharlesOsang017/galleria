@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 import User from "../models/user.model.js";
 
 export const createPost = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, category } = req.body;
   let { image } = req.body;
   const userId = req.user._id;
   try {
@@ -21,6 +21,7 @@ export const createPost = async (req, res) => {
       user: userId,
       title,
       description,
+      category,
       image: imgUrl || null, // Set img to null if no image is provided
     });
 
@@ -72,7 +73,7 @@ export const deletePost = async (req, res) => {
 };
 
 export const updatePost = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, category } = req.body;
   let { image } = req.body;
   try {
     const user = await User.findById(req.user._id);
@@ -99,6 +100,7 @@ export const updatePost = async (req, res) => {
     post.title = title || post.title;
     post.image = image || post.image;
     post.description = description || post.description;
+    post.category = category || post.category;
 
     await post.save();
     return res.status(200).json(post);
