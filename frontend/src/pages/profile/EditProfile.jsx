@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 import useProfileUpdate from "../../hooks/useProfileUpdate";
 
 const EditProfile = () => {
-	const {data: user} = useQuery({queryKey: ['authUser']})
-	const queryClient = useQueryClient()
+  const { data: user } = useQuery({ queryKey: ["authUser"] });
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     username: "",
     fullName: "",
@@ -16,26 +16,25 @@ const EditProfile = () => {
     about: "",
   });
 
-  const {updateProfile, isUpdatingProfile} = useProfileUpdate()
+  const { updateProfile, isUpdatingProfile } = useProfileUpdate();
 
+  const handleProfileUpdate = (e) => {
+    e.preventDefault();
+    updateProfile(formData);
+  };
 
-  const handleProfileUpdate = (e)=>{
-	e.preventDefault()
-	updateProfile(formData)
-  }
-
-  useEffect(()=>{
-	if(user){
-		setFormData({
-			fullName: user.fullName,
-			username: user.username,
-			email: user.email,
-			about: user.about,
-			skills: user.skills,
-			location: user.location
-		})
-	}
-  },[user])
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: user.fullName,
+        username: user.username,
+        email: user.email,
+        about: user.about,
+        skills: user.skills,
+        location: user.location,
+      });
+    }
+  }, [user]);
   return (
     <>
       <button
@@ -65,17 +64,21 @@ const EditProfile = () => {
             <div className="flex flex-wrap gap-2">
               <input
                 type="text"
-				name='fullName'
-				value={formData.fullName}
-				onChange={(e)=>setFormData({...formData, fullName: e.target.value})}
+                name="fullName"
+                value={formData.fullName}
+                onChange={(e) =>
+                  setFormData({ ...formData, fullName: e.target.value })
+                }
                 placeholder="Full Name"
                 className="flex-1 input border border-gray-700 rounded p-2 input-md"
               />
               <input
                 type="text"
-				name='username'
-				value={formData.username}
-				onChange={(e)=>setFormData({...formData, username: e.target.value})}
+                name="username"
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
                 placeholder="Username"
                 className="flex-1 input border border-gray-700 rounded p-2 input-md"
               />
@@ -83,26 +86,32 @@ const EditProfile = () => {
             <div className="flex flex-wrap gap-2">
               <input
                 type="email"
-				name='email'
-				value={formData.email}
-				onChange={(e)=>setFormData({...formData, email: e.target.value})}
+                name="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 placeholder="Email"
                 className="flex-1 input border border-gray-700 rounded p-2 input-md"
               />
-              <textarea
+              <input
                 placeholder="Location"
-				name='location'
-				value={formData.location}
-				onChange={(e)=>setFormData({...formData, location: e.target.value})}
+                name="location"
+                value={formData.location}
+                onChange={(e) =>
+                  setFormData({ ...formData, location: e.target.value })
+                }
                 className="flex-1 input border border-gray-700 rounded p-2 input-md"
               />
             </div>
             <div className="flex flex-wrap gap-2">
               <input
                 type="text"
-				name='skills'
-				value={formData.skills}
-				onChange={(e)=>setFormData({...formData, skills: e.target.value})}
+                name="skills"
+                value={formData.skills}
+                onChange={(e) =>
+                  setFormData({ ...formData, skills: e.target.value })
+                }
                 placeholder="Skill/Profession"
                 className="flex-1 input border border-gray-700 rounded p-2 input-md"
               />
@@ -110,16 +119,18 @@ const EditProfile = () => {
             <div className="flex flex-wrap gap-2">
               <input
                 type="text"
-				name='about'
-				value={formData.about}
-				onChange={(e)=>setFormData({...formData, about: e.target.value})}
+                name="about"
+                value={formData.about}
+                onChange={(e) =>
+                  setFormData({ ...formData, about: e.target.value })
+                }
                 placeholder="About"
                 className="flex-1 input border border-gray-700 rounded p-2 input-md"
               />
             </div>
 
             <button
-			type="submit"
+              type="submit"
               className="btn  btn-neutral 
  rounded-md text-white"
             >
