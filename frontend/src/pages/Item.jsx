@@ -10,7 +10,7 @@ const Item = ({post}) => {
   <img
       src={post.image}
       alt="Shoes"
-      className="object-cover rounded-md w-full h-48 opacity-60"
+      className="object-cover rounded-md w-full h-48"
     />
   </Link>
   </figure>
@@ -23,7 +23,7 @@ const Item = ({post}) => {
     <p className="text-xs font-bold text-extrabold">2 hours ago</p>
    <Link to={`/profile/${post.user.username}`} className='flex items-center gap-1'>
     <img src={post.user.profileImg} alt=""  className='rounded-full h-10 w-10'/>
-   <p className="text-sm font-bold text-extrabold  text-ellipsis">@{post.user.username}</p>
+   {/* <p className="text-sm font-bold text-extrabold  text-ellipsis">@{post.user.username}</p> */}
    </Link>
   </div>
 </div>

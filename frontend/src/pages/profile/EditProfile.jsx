@@ -95,6 +95,7 @@ const EditProfile = () => {
                 className="flex-1 input border border-gray-700 rounded p-2 input-md"
               />
               <input
+               type="text"
                 placeholder="Location"
                 name="location"
                 value={formData.location}

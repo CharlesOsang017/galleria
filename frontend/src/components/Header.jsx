@@ -32,7 +32,7 @@ const Header = () => {
                 alt={authUser.username}
                 className="h-10 w-10 rounded-full"
               />
-              <h4>@{authUser.username}</h4>
+              <h4 className="hidden md:block">@{authUser.username}</h4>
             </Link>
           </>
         ) : (
