@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import useProfileUpdate from "../../hooks/useProfileUpdate";
 import { formatMemberSinceDate } from "../../utils/date";
+import ProfileSkeleton from "../../components/skeleton/ProfileSkeleton";
 
 const ProfilePage = () => {
   const { data: logedinUser } = useQuery({ queryKey: ["authUser"] });
@@ -13,7 +14,7 @@ const ProfilePage = () => {
   const [profileImg, setProfileImg] = useState(null);
 
   const { username } = useParams();
-  const { data: user } = useQuery({
+  const { data: user, isLoading: isFetchingProfile } = useQuery({
     queryKey: ["userProfile"],
     queryFn: async () => {
       try {
@@ -64,26 +65,36 @@ const ProfilePage = () => {
     isPending,
   } = useMutation({
     mutationFn: async () => {
-      try {
-        const res = await fetch("/api/auth/logout", {
-          method: "POST",
-        });
-        if (!res.ok) throw new Error("something went wrong");
-      } catch (error) {
-        throw new Error(error);
-      }
+      const res = await fetch("/api/auth/logout", { method: "POST" });
+      if (!res.ok) throw new Error("Failed to log out");
+    },
+    onError: (error) => {
+      toast.error(error.message || "An error occurred during logout");
     },
     onSuccess: () => {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
         queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-      ]);
+      ]).then(() => {
+        toast.success("Logged out successfully");
+        window.location.href = "/login"; // Redirect to login page
+      });
     },
   });
 
   const datejoined = formatMemberSinceDate(user?.createdAt);
 
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to log out?")) {
+      exit();
+    }
+  };
+
+  
+
   return (
+   <>
+   {isFetchingProfile && (<ProfileSkeleton />)}
     <div className="container mx-auto max-w-lg p-6 shadow-lg  rounded-lg mt-8">
       <div className="relative flex flex-col items-center group">
         {/* Pencil Icon to Change Profile Image */}
@@ -136,8 +147,12 @@ const ProfilePage = () => {
       {/* Edit Profile Component */}
       <div className="flex justify-between">
         {isMyProfile && (
-          <button onClick={() => exit()} className="btn btn-ghost">
-            logout
+            <button
+            onClick={handleLogout}
+            className={`btn btn-ghost ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+            disabled={isPending}
+          >
+            {isPending ? "Logging out..." : "Logout"}
           </button>
         )}
         <div className="flex justify-end items-center mt-4">
@@ -151,6 +166,7 @@ const ProfilePage = () => {
         <p className="text-gray-700 mt-2">{user?.about}</p>
       </div>
     </div>
+   </>
   );
 };
 

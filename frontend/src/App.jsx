@@ -14,7 +14,7 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import Update from "./pages/Update";
 
 const App = () => {
-  const { data: user } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
       try {
@@ -30,7 +30,13 @@ const App = () => {
     retry: false,
   });
 
-  console.log("me", user);
+if(isLoading){
+  return (
+    <div className="flex justify-center items-center min-h-screen">
+  <div className="loader-h w-16 h-16 border-4 border-t-4 border-gray-300 rounded-full animate-spin"></div>
+</div>
+  )
+}
 
   return (
     <>

@@ -7,12 +7,10 @@ import { useNavigate } from 'react-router-dom';
 const Update = () => {
     const queryClient = useQueryClient()
     const navigate = useNavigate()
-    const [formData, setFormData] = useState({
-        title: "",
-        image: "",
-        description: "",
-        category: ""
-      })
+  const [title, setTitle] = useState("");
+  const [image, setImage] = useState(null);
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
 
     const {data: detailPost, isLoading} = useQuery({queryKey: ['detailPost']})    
     const {mutate: updatePost, isPending: isUpdatingPost} = useMutation({
@@ -23,7 +21,7 @@ const Update = () => {
               headers: {
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify(formData)
+              body: JSON.stringify({title, image, category, description})
             })
             const data = await res.json()
           if(!res.ok){
@@ -49,7 +47,7 @@ const Update = () => {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = () => {
-                    setFormData({image: reader.result})
+                    setImage(reader.result)
                     // setImage(reader.result);
                 };
                 reader.readAsDataURL(file);
@@ -57,7 +55,7 @@ const Update = () => {
       };
     
       const handleClearImage = () => {
-        setFormData({image:null})
+        setImage(null)
       };
     
       const handleSubmit = (e, title, image, description, category) => {
@@ -68,12 +66,11 @@ const Update = () => {
 
       useEffect(()=>{
         if(detailPost){
-            setFormData({
-                title: detailPost.title,
-                image: detailPost.image,
-                description: detailPost.description,
-                category: detailPost.category
-            })
+                setTitle(detailPost.title),
+                setImage(detailPost.image),
+                setDescription(detailPost.description),
+                setCategory(detailPost.category)
+           
         }
       },[])
   return (
@@ -84,8 +81,8 @@ const Update = () => {
         type="text"
         placeholder="Title"
         name='title'
-        value={formData.title}
-        onChange={(e) => setFormData({...formData, title: e.target.value})}
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         className="input border border-gray-700 rounded p-2"
         required
       />
@@ -96,24 +93,24 @@ const Update = () => {
         className="border border-gray-700 rounded p-2"
         required
       />
-      {formData.image && (
+      {image && (
         <div className="relative">
           <X className="absolute top-2 right-2 cursor-pointer" onClick={handleClearImage} />
-          <img src={formData.image} alt="Preview" className="mt-2 rounded-md" />
+          <img src={image} alt="Preview" className="mt-2 rounded-md" />
         </div>
       )}
       <textarea
         placeholder="Description"
-        value={formData.description}
+        value={description}
         name='description'
-        onChange={(e) => setFormData({...formData, description: e.target.value})}
+        onChange={(e) => setDescription(e.target.value)}
         className="input border border-gray-700 rounded p-2"
         required
       />
       <select
-        value={formData.category}
+        value={category}
         name="category"
-        onChange={(e) => setFormData({...formData, category: e.target.value})}
+        onChange={(e) => setCategory(e.target.value)}
         className="input border border-gray-700 rounded p-2"
         required
       >
