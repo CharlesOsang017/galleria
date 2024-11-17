@@ -26,6 +26,9 @@ const Items = () => {
      <ItemsSkeleton />
      <ItemsSkeleton />
      <ItemsSkeleton />
+     <ItemsSkeleton />
+     <ItemsSkeleton />
+     <ItemsSkeleton />
      </>
   
   )}
