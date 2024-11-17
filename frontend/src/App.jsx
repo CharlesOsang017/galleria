@@ -30,17 +30,19 @@ const App = () => {
     retry: false,
   });
 
-if(isLoading){
-  return (
-    <div className="flex justify-center items-center min-h-screen">
-  <div className="loader-h w-16 h-16 border-4 border-t-4 border-gray-300 rounded-full animate-spin"></div>
-</div>
-  )
-}
+
+
+  
 
   return (
     <>
       <Header />
+      {isLoading && (
+          <div className="flex justify-center items-center min-h-screen">
+          <div className="loader-h w-16 h-16 border-4 border-t-4 border-gray-300 rounded-full animate-spin"></div>
+        </div>
+         
+      )}
       <Routes>
         <Route
           path="/register"
@@ -70,7 +72,7 @@ if(isLoading){
           path="/create"
           element={user ? <CreateGalleryPage /> : <Navigate to="/login" />}
         />
-        <Route path="/" element={<Hero />} />
+        <Route path="/" element={!user ? <Hero /> : <Navigate to='/items' />}  />
       </Routes>
       <Toaster />
     </>
