@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useProfileUpdate from "../../hooks/useProfileUpdate";
 
-const EditProfile = () => {
+const EditProfile = ({isMyProfile}) => {
   const { data: user } = useQuery({ queryKey: ["authUser"] });
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
@@ -37,14 +37,17 @@ const EditProfile = () => {
   }, [user]);
   return (
     <>
+    {isMyProfile && (
       <button
-        className="btn btn-outline rounded-full btn-sm"
-        onClick={() =>
-          document.getElementById("edit_profile_modal").showModal()
-        }
-      >
-        Edit profile
-      </button>
+      className="btn btn-outline rounded-full btn-sm"
+      onClick={() =>
+        document.getElementById("edit_profile_modal").showModal()
+      }
+    >
+      Edit profile
+    </button>
+    )}
+      
       <dialog id="edit_profile_modal" className="modal">
         <div className="modal-box border rounded-md border-gray-700 shadow-md relative">
           {/* Close Button */}

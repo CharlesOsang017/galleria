@@ -8,11 +8,9 @@ import useProfileUpdate from "../../hooks/useProfileUpdate";
 import { formatMemberSinceDate } from "../../utils/date";
 
 const ProfilePage = () => {
-  
   const { data: logedinUser } = useQuery({ queryKey: ["authUser"] });
   const profileImgRef = useRef(null);
   const [profileImg, setProfileImg] = useState(null);
-
 
   const { username } = useParams();
   const { data: user } = useQuery({
@@ -33,8 +31,6 @@ const ProfilePage = () => {
 
   const isMyProfile = logedinUser?._id === user?._id;
 
- 
-
   // const handleImgChange = (e) => {
   //   const file = e.target.files[0];
   //   if (file) {
@@ -44,23 +40,21 @@ const ProfilePage = () => {
   //   }
   // };
 
-  
   const handleImgChange = (e) => {
     const file = e.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = () => {
-				setProfileImg(reader.result);
-			};
-			reader.readAsDataURL(file);
-		}
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setProfileImg(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // const handleProfileImg = (profileImg) => {
   //   mutate(profileImg);
   // };
-  const {updateProfile, isUpdatingProfile} = useProfileUpdate()
-
+  const { updateProfile, isUpdatingProfile } = useProfileUpdate();
 
   const queryClient = useQueryClient();
   const {
@@ -81,34 +75,41 @@ const ProfilePage = () => {
     },
     onSuccess: () => {
       Promise.all([
-				queryClient.invalidateQueries({queryKey: ['userProfile']}),
-				queryClient.invalidateQueries({queryKey: ['authUser']})
-			])
+        queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
+        queryClient.invalidateQueries({ queryKey: ["authUser"] }),
+      ]);
     },
   });
 
-  const datejoined = formatMemberSinceDate(user?.createdAt)
+  const datejoined = formatMemberSinceDate(user?.createdAt);
 
   return (
     <div className="container mx-auto max-w-lg p-6 shadow-lg  rounded-lg mt-8">
       <div className="relative flex flex-col items-center group">
         {/* Pencil Icon to Change Profile Image */}
         <div className="absolute top-2 right-4  rounded-full p-1  ">
-          {profileImg ? (
-            <button
-              onClick={() =>  updateProfile({profileImg})}
-              className="btn btn-outline rounded-full btn-sm"
-            >
-              {isUpdatingProfile ? (<div className="loader"></div>) : "save"}
-            </button>
-          ) : (
-            <PencilIcon
-              className="text-gray-600 h-5 w-5 cursor-pointer"
-              onClick={() => {
-                profileImgRef.current.click();
-              }}
-            />
-          )}
+          {isMyProfile &&
+            (profileImg ? (
+              <button
+                onClick={() => updateProfile({ profileImg })}
+                className={`btn btn-outline rounded-full btn-sm ${
+                  isUpdatingProfile ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={isUpdatingProfile}
+              >
+                {isUpdatingProfile ? (
+                  <div className="loader w-4 h-4 border-t-2 border-gray-600 rounded-full animate-spin"></div>
+                ) : (
+                  "Save"
+                )}
+              </button>
+            ) : (
+              <PencilIcon
+                className="text-gray-600 h-5 w-5 cursor-pointer"
+                onClick={() => profileImgRef.current.click()}
+              />
+            ))}
+
           <input
             type="file"
             hidden
@@ -119,7 +120,7 @@ const ProfilePage = () => {
 
         {/* Profile Image */}
         <img
-          src={profileImg || user?.profileImg }
+          src={profileImg || user?.profileImg}
           alt={`${user?.username || "user"}'s profile`}
           className="rounded-full w-40 h-40 object-cover"
         />
@@ -134,11 +135,13 @@ const ProfilePage = () => {
 
       {/* Edit Profile Component */}
       <div className="flex justify-between">
-        <button onClick={() => exit()} className="btn btn-ghost">
-          logout
-        </button>
+        {isMyProfile && (
+          <button onClick={() => exit()} className="btn btn-ghost">
+            logout
+          </button>
+        )}
         <div className="flex justify-end items-center mt-4">
-          <EditProfile />
+          <EditProfile isMyProfile={isMyProfile}/>
         </div>
       </div>
 

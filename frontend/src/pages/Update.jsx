@@ -14,8 +14,8 @@ const Update = () => {
         category: ""
       })
 
-    const {data: detailPost, isPending} = useQuery({queryKey: ['detailPost']})
-    const {mutate: updatePost, isLoading: isUpdatingPost} = useMutation({
+    const {data: detailPost, isLoading} = useQuery({queryKey: ['detailPost']})    
+    const {mutate: updatePost, isPending: isUpdatingPost} = useMutation({
         mutationFn: async()=>{
           try {
             const res = await fetch(`/api/post/update/${detailPost._id}`, {
@@ -126,7 +126,7 @@ const Update = () => {
         {/* Add more categories as needed */}
       </select>
       <button type="submit" className="btn btn-primary rounded-full mt-4 text-white">
-        Update
+        {isUpdatingPost ? (<div className='loader'></div>) : "Update"}
       </button>
     </form>
   </div>
